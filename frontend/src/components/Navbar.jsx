@@ -50,17 +50,14 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md px-6 py-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-blue-600">
           StreamIt
         </Link>
 
-        {/* Desktop Links */}
         <div className="hidden md:flex space-x-6">
           <NavLinks />
         </div>
 
-        {/* Mobile Hamburger */}
         <div className="md:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700">
             ☰
@@ -68,7 +65,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden mt-2 flex flex-col space-y-2 px-4">
           <NavLinks />
