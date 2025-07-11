@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import userApi from "../api/userApi";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const res = await api.post("/login", { email, password });
+      const res = await userApi.post("/login", { email, password });
       alert(res.data.message || "Login successful!");
       navigate("/profile");
       localStorage.setItem("accessToken", res.data.accessToken);

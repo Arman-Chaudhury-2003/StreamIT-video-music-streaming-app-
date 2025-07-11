@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/axios";
+import userApi from "../api/userApi";
 
 export default function ChangePassword() {
   const [formData, setFormData] = useState({
@@ -23,7 +23,7 @@ export default function ChangePassword() {
 
     try {
       setLoading(true);
-      await api.post("/change-password", formData);
+      await userApi.post("/change-password", formData);
       alert("Password changed successfully.");
       setFormData({ oldPassword: "", newPassword: "" });
     } catch (err) {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/axios";
+import userApi from "../api/userApi";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const res = await api.post("/register", form, {
+      const res = await userApi.post("/register", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert(res.data.message || "Registration successful!");

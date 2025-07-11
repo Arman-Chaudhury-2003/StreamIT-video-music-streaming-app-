@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const api = axios.create({
+const userApi = axios.create({
   baseURL: "http://localhost:8000/api/v1/users", //backend
   withCredentials: true, // send cookies
 });
 
-export default api;
+export default userApi;

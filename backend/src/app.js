@@ -3,6 +3,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { CORS_ORIGIN } from "./config.js";
 import userRouter from "./routes/user.routes.js";
+import videoRoutes from "./routes/video.routes.js";
+
 const app = express();
 
 //always use app.use for middleware functions
@@ -22,5 +24,6 @@ app.use(cookieParser()); //CRUD options on cookies given by users
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/videos", videoRoutes);
 
 export { app };

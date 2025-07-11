@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import userApi from "../api/userApi";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -15,7 +15,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await api.get("/current-user");
+      const res = await userApi.get("/current-user");
       setUser(res.data.data);
     } catch (err) {
       console.error("Error fetching user:", err.response?.data || err.message);
@@ -34,7 +34,7 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      await api.post("/update-details", {
+      await userApi.post("/update-details", {
         fullName: editForm.fullName,
         email: editForm.email,
       });
@@ -42,7 +42,7 @@ export default function Profile() {
       if (newAvatar) {
         const avatarForm = new FormData();
         avatarForm.append("avatar", newAvatar);
-        await api.post("/avatar", avatarForm, {
+        await userApi.post("/avatar", avatarForm, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -50,7 +50,7 @@ export default function Profile() {
       if (newCoverImage) {
         const coverForm = new FormData();
         coverForm.append("coverImage", newCoverImage);
-        await api.post("/coverImage", coverForm, {
+        await userApi.post("/coverImage", coverForm, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }

@@ -5,18 +5,17 @@ import Register from "./auth/Register";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRouted";
 import ChangePassword from "./pages/ChangePassword";
+import Home from "./pages/Home";
+import UploadVideo from "./pages/upload.jsx";
+import MyVideos from "./video/myVideos.jsx";
+import WatchVideo from "./pages/watchVideo.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="p-6 text-center text-xl">Welcome to StreamIt</div>
-          }
-        />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -37,6 +36,23 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <UploadVideo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-videos"
+          element={
+            <ProtectedRoute>
+              <MyVideos />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/watch/:videoId" element={<WatchVideo />} />
       </Routes>
     </BrowserRouter>
   );

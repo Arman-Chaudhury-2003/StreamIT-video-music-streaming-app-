@@ -22,6 +22,9 @@ export default function Navbar() {
       <Link to="/" className="text-gray-700 hover:text-blue-600">
         Home
       </Link>
+      <Link to="/upload" className="text-gray-700 hover:text-blue-600">
+        Upload
+      </Link>
       {loggedIn ? (
         <>
           <Link to="/profile" className="text-gray-700 hover:text-blue-600">

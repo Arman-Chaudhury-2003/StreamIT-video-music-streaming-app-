@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import userApi from "../api/axios";
 
 export default function Channel() {
   const { username } = useParams();
   const [channel, setChannel] = useState(null);
 
   useEffect(() => {
-    api
+    userApi
       .get(`/c/${username}`)
       .then((res) => setChannel(res.data))
       .catch((err) => console.error("Channel not found", err));
