@@ -6,6 +6,8 @@ import { ApiResponse } from "../utils/APIResponse.js";
 import jwt from "jsonwebtoken";
 import { REFRESH_TOKEN_SECRET } from "../config.js";
 import mongoose from "mongoose";
+import { Video } from "../models/video.models.js";
+
 
 //whats going on :- userID passed
 const generateAccessandRefreshTokens = async (userId) => {
@@ -265,9 +267,30 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-  return res
-    .status(200)
-    .json(new ApiResponse(200, req.user, "current user fetched successfully"));
+  const user = await User.findById(req.user._id).select(
+    "fullName username email avatar coverImage"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const videos = await Video.find({ owner: req.user._id });
+
+  const totalUploads = videos.length;
+  const totalViews = videos.reduce((sum, video) => sum + (video.views || 0), 0);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        ...user.toObject(),
+        totalUploads,
+        totalViews,
+      },
+      "User details with video stats"
+    )
+  );
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -373,7 +396,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         from: "subscriptions",
         localField: "_id",
         foreignField: "channel",
-        as: "subscripers",
+        as: "subscribers",
       },
     },
     {
@@ -381,21 +404,35 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         from: "subscriptions",
         localField: "_id",
         foreignField: "subscriber",
-        as: "subscripedTo",
+        as: "subscriptions",
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "_id",
+        foreignField: "owner",
+        as: "recentVideos",
       },
     },
     {
       $addFields: {
-        subscribersCount: {
-          $size: "$subscripers",
-        },
-        channelSubscribedToCount: {
-          $size: "$subscripedTo",
-        },
+        recentVideos: { $slice: ["$recentVideos", 5] },
+        subscribersCount: { $size: "$subscribers" },
+        subscriptionsCount: { $size: "$subscriptions" },
         isSubscribed: {
           $cond: {
             if: {
-              $in: [req.user?._id, "$subscripers.subscriber"],
+              $in: [
+                req.user?._id || null,
+                {
+                  $map: {
+                    input: "$subscribers",
+                    as: "sub",
+                    in: "$$sub.subscriber",
+                  },
+                },
+              ],
             },
             then: true,
             else: false,
@@ -407,12 +444,20 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       $project: {
         fullName: 1,
         username: 1,
-        email: 1,
-        subscribersCount: 1,
-        channelSubscribedToCount: 1,
-        isSubscribed: 1,
         avatar: 1,
         coverImage: 1,
+        email: 1,
+        subscribersCount: 1,
+        subscriptionsCount: 1,
+        isSubscribed: 1,
+        recentVideos: {
+          _id: 1,
+          title: 1,
+          thumbnail: 1,
+          views: 1,
+          createdAt: 1,
+          isPublic: 1,
+        },
       },
     },
   ]);

@@ -1,78 +1,108 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated, logoutUser } from "../utils/token.js";
+import { getCurrentUser } from "../api/userApi.js";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    setLoggedIn(isAuthenticated());
-  }, []);
+    const checkAuth = async () => {
+      const isLogged = isAuthenticated();
+      setLoggedIn(isLogged);
+
+      if (isLogged) {
+        try {
+          const res = await getCurrentUser();
+          setCurrentUser(res.data.data);
+        } catch (err) {
+          console.error("Error fetching current user", err);
+        }
+      } else {
+        setCurrentUser(null);
+      }
+    };
+
+    checkAuth();
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logoutUser();
     setLoggedIn(false);
+    setCurrentUser(null);
     navigate("/login");
   };
 
-  const NavLinks = () => (
-    <>
-      <Link to="/" className="text-gray-700 hover:text-blue-600">
-        Home
-      </Link>
-      <Link to="/upload" className="text-gray-700 hover:text-blue-600">
-        Upload
-      </Link>
-      {loggedIn ? (
-        <>
-          <Link to="/profile" className="text-gray-700 hover:text-blue-600">
-            Profile
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="text-gray-700 hover:text-red-600"
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <>
-          <Link to="/login" className="text-gray-700 hover:text-blue-600">
-            Login
-          </Link>
-          <Link to="/register" className="text-gray-700 hover:text-blue-600">
-            Register
-          </Link>
-        </>
-      )}
-    </>
-  );
-
   return (
-    <nav className="bg-white shadow-md px-6 py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-blue-600">
-          StreamIt
-        </Link>
-
-        <div className="hidden md:flex space-x-6">
-          <NavLinks />
+    <nav className="bg-gray-800 p-4 text-white">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex gap-4">
+          <Link to="/" className="font-semibold text-lg">
+            StreamIt
+          </Link>
         </div>
 
-        <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700">
-            ☰
-          </button>
+        <div className="flex items-center gap-4 ml-auto">
+          {!loggedIn && (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          )}
+
+          {loggedIn && currentUser && (
+            <>
+              <Link
+                to="/upload"
+                className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 text-white"
+              >
+                Upload
+              </Link>
+
+              <div className="relative">
+                <img
+                  src={currentUser.avatar}
+                  alt="profile"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="h-8 w-8 rounded-full cursor-pointer border-2 border-white"
+                />
+                {isOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white text-black shadow-lg rounded z-50">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/my-videos"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      My Videos
+                    </Link>
+                    <Link
+                      to="/change-password"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Change Password
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
-
-      {isOpen && (
-        <div className="md:hidden mt-2 flex flex-col space-y-2 px-4">
-          <NavLinks />
-        </div>
-      )}
     </nav>
   );
 }

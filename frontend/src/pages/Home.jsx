@@ -22,7 +22,7 @@ const Home = () => {
       <h2 className="text-2xl font-semibold mb-4">Public Videos</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {videos.map((video) => {
-          console.log("Video ID being linked:", video._id); // 🛠 Debug log
+          console.log("Video ID being linked:", video._id); // debug log
 
           return (
             <Link key={video._id} to={`/watch/${video._id}`}>

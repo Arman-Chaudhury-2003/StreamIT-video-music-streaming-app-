@@ -5,4 +5,6 @@ const userApi = axios.create({
   withCredentials: true, // send cookies
 });
 
+export const getCurrentUser = () => userApi.get("/current-user");
+
 export default userApi;
