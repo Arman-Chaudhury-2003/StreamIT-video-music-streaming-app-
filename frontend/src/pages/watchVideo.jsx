@@ -21,6 +21,7 @@ import {
   clearComments,
 } from "../slices/commentSlice";
 
+//sob states
 const WatchVideo = () => {
   const { videoId } = useParams();
   const dispatch = useDispatch();
