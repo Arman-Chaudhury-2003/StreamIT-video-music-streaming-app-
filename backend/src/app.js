@@ -8,7 +8,7 @@ import subsRoutes from "./routes/subs.routes.js";
 import likesRoutes from "./routes/like.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 const app = express();
-
+// console.log(likesRoutes)
 //always use app.use for middleware functions
 app.use(
   cors({
@@ -28,7 +28,7 @@ app.use(cookieParser()); //CRUD options on cookies given by users
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRoutes);
 app.use("/api/v1/subscriptions", subsRoutes);
-app.use("api/v1/likes", likesRoutes);
-app.use("api/v1/comments", commentRoutes);
+app.use("/api/v1/likes", likesRoutes);
+app.use("/api/v1/comments", commentRoutes);
 
 export { app };

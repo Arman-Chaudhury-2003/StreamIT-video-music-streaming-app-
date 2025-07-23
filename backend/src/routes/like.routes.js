@@ -18,7 +18,7 @@ router.route("/dislike/:videoId").post(verifyJWT, dislikeVideo);
 
 router.route("/undislike/:videoId").delete(verifyJWT, removeReaction);
 
-//
+//get the reactionfrom the user
 router.route("/:videoId/reactions").get(getReactionCounts);
 
 // Check if user has liked/disliked a video
