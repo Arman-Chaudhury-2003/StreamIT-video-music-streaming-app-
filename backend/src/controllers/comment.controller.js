@@ -20,12 +20,12 @@ const addComment = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, comment, "Comment added successfully"));
 });
-
 // DELETE /delete/:commentId
 const deleteComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
-
+  
   const comment = await Comment.findById(commentId);
+  console.log(commentId);
   if (!comment) throw new ApiError(404, "Comment not found");
 
   if (comment.user.toString() !== req.user._id.toString()) {

@@ -7,7 +7,7 @@ const commentApi = axios.create({
 
 // Add a new comment
 export const addComment = (videoId, content) =>
-  commentApi.post(`/${videoId}`, { content });
+  commentApi.post(`/add/${videoId}`, { content });
 
 // Get all comments for a video
 export const getVideoComments = (videoId) =>
